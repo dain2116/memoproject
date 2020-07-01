@@ -6,9 +6,12 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -33,6 +36,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
     private static String TAG = "MainActivity";
@@ -40,7 +45,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     Context context;
 
     // 날짜 시계 표시
-    TextView dateNow;
+    Timer timer;
+    Handler handler;
+    TextView dateNowTextView;
 
     // 주소 표시
     SensorManager sensorManager;
@@ -57,6 +64,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     Button deleteButton;
     EditText inputText;
 
+    class MainTimerTask extends TimerTask {
+        public void run() {
+            Message message = handler.obtainMessage();
+            handler.sendMessage(message);
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,12 +78,20 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         context = this;
 
         // 날짜 시계 표시
-        long now = System.currentTimeMillis();  // 현재시간을 msec 으로 구한다.
-        Date date = new Date(now);  // 현재시간을 date 변수에 저장한다.
-        SimpleDateFormat sdfNow = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");  // 시간을 나타냇 포맷을 정한다 ( yyyy/MM/dd 같은 형태로 변형 가능 )
-        String formatDate = sdfNow.format(date);    // nowDate 변수에 값을 저장한다.
-        dateNow = (TextView) findViewById(R.id.dateNow);
-        dateNow.setText(formatDate);    // TextView 에 현재 시간 문자열 할당
+        handler = new Handler(new Handler.Callback() {
+            public boolean handleMessage(Message msg) {
+                Date dateNow = new Date();
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+                String formatDate = dateFormat.format(dateNow);
+                dateNowTextView = (TextView) findViewById(R.id.dateNowTextView);
+                dateNowTextView.setText(formatDate);
+                return true;
+            }
+        });
+
+        timer = new Timer();
+        timer.schedule(new MainTimerTask(), 500, 1000);
+
 
         // 주소 표시
         addressTextView = (TextView) findViewById(R.id.addressTextView);
@@ -199,6 +221,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     protected void onResume() {
         super.onResume();
 
+        //timer.schedule(new MainTimerTask(), 500, 1000);
+
         sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_UI);
         sensorManager.registerListener(this, magnetometer, SensorManager.SENSOR_DELAY_UI);
     }
@@ -206,8 +230,16 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     @Override
     protected void onPause() {
         super.onPause();
+        //timer.cancel();
 
         sensorManager.unregisterListener(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        timer.cancel();
+
+        super.onDestroy();
     }
 
     @Override
