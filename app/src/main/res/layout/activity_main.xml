@@ -6,47 +6,73 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <LinearLayout
         android:orientation="vertical" android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <!-- 시계 -->
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal|center_vertical">
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/dateNow" />
         </LinearLayout>
 
+        <!-- 주소 -->
         <LinearLayout
-            android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:orientation="horizontal">
 
-            <Button
+            <TextView
+                android:id="@+id/addressTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="LOAD"
+                android:layout_weight="1"
+                android:textSize="12sp"
+                android:text="주소 표시" />
+
+            <Button
+                android:id="@+id/addressButton"
+                android:layout_width="45dp"
+                android:layout_height="wrap_content"
+                android:textSize="8sp"
+                android:text="Addr" />
+        </LinearLayout>
+
+        <!-- 메모장 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <Button
                 android:id="@+id/load"
-                android:layout_weight="1" />
-
-            <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="SAVE"
+                android:layout_weight="1"
+                android:text="LOAD" />
+
+            <Button
                 android:id="@+id/save"
-                android:layout_weight="1" />
-
-            <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="DELETE"
+                android:layout_weight="1"
+                android:text="SAVE" />
+
+            <Button
                 android:id="@+id/delete"
-                android:layout_weight="1" />
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="DELETE" />
         </LinearLayout>
 
         <EditText
